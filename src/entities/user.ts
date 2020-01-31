@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import _ = require('lodash');
+import _ = require("lodash");
 import {PagedResult} from "./pagedResult";
 export class User {
   public id: string;
@@ -24,12 +24,13 @@ export class User {
   public userPermissions: string[];
   public userApiPermissions: string[];
   public userApplicationPermissions: string[];
+  public source: string;
   public tasks: PagedResult;
   public notifications: PagedResult;
   public authenticated: boolean = false;
 
   constructor() {
-    'ngInject';
+    "ngInject";
     this.tasks = new PagedResult();
     this.notifications = new PagedResult();
   }
@@ -48,8 +49,8 @@ export class User {
       return false;
     }
     return _.some(this.userPermissions, (userPermission) => {
-      return _.startsWith(userPermission, 'management-instance')
-       || _.startsWith(userPermission, 'management-platform');
+      return _.startsWith(userPermission, "management-instance")
+       || _.startsWith(userPermission, "management-platform");
     });
   }
 }

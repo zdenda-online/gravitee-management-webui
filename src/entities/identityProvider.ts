@@ -35,8 +35,9 @@ export class IdentityProvider {
   public roleMappings: RoleMapping[];
   public userProfileMapping: {id: string, firstname: string, lastname: string, email: string, picture: string};
   public emailRequired: boolean;
+  public order: number;
 
   constructor() {
-    'ngInject';
+    "ngInject";
   }
 }

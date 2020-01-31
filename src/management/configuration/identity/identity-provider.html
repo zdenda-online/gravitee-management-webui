@@ -42,7 +42,7 @@
         <div layout-gt-sm="row">
           <md-input-container class="md-block" flex-gt-sm>
             <label>Name</label>
-            <input ng-model="$ctrl.identityProvider.name" type="text" required name="name" maxlength="50" autofocus>
+            <input ng-model="$ctrl.identityProvider.name" type="text" required name="name" maxlength="50" autofocus ng-readonly="$ctrl.identityProvider.type === 'memory' || $ctrl.identityProvider.type === 'gravitee'">
             <div class="hint" ng-if="formIdentityProvider.name.$valid || formIdentityProvider.name.$pristine">
               Identity provider name. The name will be used to define the authentication endpoint.</div>
             <div ng-messages="formIdentityProvider.name.$error">
@@ -55,7 +55,7 @@
         <div layout-gt-sm="row">
           <md-input-container class="md-block" flex-gt-sm>
             <label>Description</label>
-            <input ng-model="$ctrl.identityProvider.description" type="text" name="description">
+            <input ng-model="$ctrl.identityProvider.description" type="text" name="description" ng-readonly="$ctrl.identityProvider.type === 'memory' || $ctrl.identityProvider.type === 'gravitee'">
             <div class="hint" ng-if="formIdentityProvider.description.$valid || formIdentityProvider.description.$pristine">
               Provide a description of the identity provider
             </div>
@@ -72,7 +72,7 @@
           </md-input-container>
         </div>
 
-        <div layout-gt-sm="row">
+        <div layout-gt-sm="row" ng-if="$ctrl.isSocialProvider()">
           <md-input-container class="md-block" flex-gt-sm>
             <md-checkbox
                     ng-model="$ctrl.identityProvider.emailRequired"
@@ -91,9 +91,12 @@
       <gv-identityprovider-github ng-switch-when="github" identity-provider="$ctrl.identityProvider"></gv-identityprovider-github>
       <gv-identityprovider-oidc ng-switch-when="oidc" identity-provider="$ctrl.identityProvider"></gv-identityprovider-oidc>
       <gv-identityprovider-graviteeio-am ng-switch-when="graviteeio_am" identity-provider="$ctrl.identityProvider"></gv-identityprovider-graviteeio-am>
+      <gv-identityprovider-gravitee ng-switch-when="gravitee" identity-provider="$ctrl.identityProvider"></gv-identityprovider-gravitee>
+      <gv-identityprovider-ldap ng-switch-when="ldap" identity-provider="$ctrl.identityProvider" form-identity-provider="formIdentityProvider"></gv-identityprovider-ldap>
+      <gv-identityprovider-memory ng-switch-when="memory" identity-provider="$ctrl.identityProvider"></gv-identityprovider-memory>
     </div>
 
-    <div class="gv-form" ng-if="$ctrl.updateMode">
+    <div class="gv-form" ng-if="$ctrl.updateMode && $ctrl.isSocialProvider()">
       <h2>Groups Mapping</h2>
       <div class="gv-form-content" layout="column">
 
@@ -126,7 +129,7 @@
       </div>
     </div>
 
-    <div class="gv-form" ng-if="$ctrl.updateMode">
+    <div class="gv-form" ng-if="$ctrl.updateMode && $ctrl.isSocialProvider()">
       <h2>Roles Mapping</h2>
       <div class="gv-form-content" layout="column">
 

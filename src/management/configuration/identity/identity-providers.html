@@ -33,21 +33,86 @@
         </md-checkbox>
       </md-input-container>
 
-      <md-table-container ng-if="$ctrl.identityProviders.length > 0">
+      <h3>Identity providers</h3>
+      <md-table-container>
         <table md-table class="gv-table-dense">
           <thead md-head>
           <tr md-row>
             <th md-column width="1%" nowrap></th>
-            <th md-column>ID</th>
-            <th md-column>Name</th>
+            <th md-column width="90px">ID</th>
+            <th md-column width="90px">Name</th>
+            <th md-column width="90px"></th>
             <th md-column>Description</th>
-            <th md-column>Enabled</th>
             <th md-column>Last updated at</th>
+            <th md-column></th>
+            <th md-column width="76px"></th>
             <th md-column width="48px" nowrap></th>
           </tr>
           </thead>
           <tbody md-body>
-          <tr md-row ng-repeat="identityProvider in $ctrl.identityProviders | orderBy: name">
+          <tr md-row ng-repeat="identityProvider in $ctrl.internalIdentityProviders | orderBy: ['order', 'name']">
+            <td md-cell ng-switch="identityProvider.type">
+              <ng-md-icon ng-switch-when="memory" icon="memory"></ng-md-icon>
+              <ng-md-icon ng-switch-when="ldap" icon="group"></ng-md-icon>
+              <ng-md-icon ng-switch-when="gravitee" icon="account_circle"></ng-md-icon>
+            </td>
+            <td md-cell>
+              <a ui-sref="management.settings.identityproviders.identityprovider({id: identityProvider.id})">{{identityProvider.id}}</a>
+            </td>
+            <td md-cell>{{identityProvider.name}}</td>
+            <td md-cell><span ng-if="identityProvider.type === 'memory' || identityProvider.type === 'gravitee'"flex class="badge">System</span></td>
+            <td md-cell>{{identityProvider.description}}</td>
+            <td md-cell>{{identityProvider.updated_at | date:'MMM d, y h:mm:ss a'}}</td>
+            <td md-cell>
+              <ng-md-icon permission permission-only="['portal-identity_provider-u', 'api-identity_provider-u']"
+                          ng-if="identityProvider.enabled" icon="done" ng-click="$ctrl.changeIdentityProviderStatus(identityProvider, false)">
+                <md-tooltip md-direction="top" md-visible="false">Disable provider</md-tooltip>
+              </ng-md-icon>
+              <ng-md-icon permission permission-only="['portal-identity_provider-u', 'api-identity_provider-u']"
+                          ng-if="!identityProvider.enabled" icon="do_not_disturb" ng-click="$ctrl.changeIdentityProviderStatus(identityProvider, true)">
+                <md-tooltip md-direction="top" md-visible="false">Enable provider</md-tooltip>
+              </ng-md-icon>
+            </td>
+            <td md-cell width="76px" nowrap>
+              <ng-md-icon ng-if="identityProvider.order > 1" icon="arrow_upwards" ng-click="$ctrl.upward(identityProvider)"
+                          permission permission-only="['portal-identity_provider-u', 'api-identity_provider-u']">
+                  <md-tooltip md-direction="top" md-visible="false">Move upward</md-tooltip>
+              </ng-md-icon>
+              <span ng-if="$first" style="padding-right: 28px"></span>
+              <ng-md-icon ng-if="identityProvider.order > 0 && !$last" icon="arrow_downward" ng-click="$ctrl.downward(identityProvider)"
+                          permission permission-only="['portal-identity_provider-u', 'api-identity_provider-u']">
+                  <md-tooltip md-direction="top" md-visible="false">Move downward</md-tooltip>
+              </ng-md-icon>
+            </td>
+            <td md-cell width="40" nowrap>
+              <ng-md-icon permission permission-only="'portal-identity_provider-d'"
+                          icon="delete" ng-click="$ctrl.delete(identityProvider)"
+                          ng-if="identityProvider.type !== 'memory' && identityProvider.type !== 'gravitee'">
+                <md-tooltip md-direction="top" md-visible="false">Delete</md-tooltip>
+              </ng-md-icon>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </md-table-container>
+
+      <h3>Social providers</h3>
+      <md-table-container>
+        <table md-table class="gv-table-dense">
+          <thead md-head>
+          <tr md-row>
+            <th md-column width="1%" nowrap></th>
+            <th md-column width="90px">ID</th>
+            <th md-column width="180px">Name</th>
+            <th md-column>Description</th>
+            <th md-column>Last updated at</th>
+            <th md-column></th>
+            <th md-column width="76px"></th>
+            <th md-column width="48px" nowrap></th>
+          </tr>
+          </thead>
+          <tbody md-body>
+          <tr md-row ng-repeat="identityProvider in $ctrl.socialIdentityProviders | orderBy: name">
             <td md-cell ng-switch="identityProvider.type">
               <ng-md-icon ng-switch-when="google" icon="google-plus"></ng-md-icon>
               <ng-md-icon ng-switch-when="github" icon="github-circle"></ng-md-icon>
@@ -59,13 +124,22 @@
             </td>
             <td md-cell>{{identityProvider.name}}</td>
             <td md-cell>{{identityProvider.description}}</td>
-            <td md-cell>
-              <ng-md-icon ng-if="identityProvider.enabled" icon="done"></ng-md-icon>
-            </td>
             <td md-cell>{{identityProvider.updated_at | date:'MMM d, y h:mm:ss a'}}</td>
+            <td md-cell>
+              <ng-md-icon permission permission-only="['portal-identity_provider-u', 'api-identity_provider-u']"
+                          ng-if="identityProvider.enabled" icon="done" ng-click="$ctrl.changeIdentityProviderStatus(identityProvider, false)">
+                <md-tooltip md-direction="top" md-visible="false">Disable provider</md-tooltip>
+              </ng-md-icon>
+              <ng-md-icon permission permission-only="['portal-identity_provider-u', 'api-identity_provider-u']"
+                          ng-if="!identityProvider.enabled" icon="do_not_disturb" ng-click="$ctrl.changeIdentityProviderStatus(identityProvider, true)">
+                <md-tooltip md-direction="top" md-visible="false">Enable provider</md-tooltip>
+              </ng-md-icon>
+            </td>
+            <td md-cell width="76px" nowrap></td>
             <td md-cell width="40" nowrap>
               <ng-md-icon permission permission-only="'portal-identity_provider-d'"
-                          icon="delete" ng-click="$ctrl.delete(identityProvider)">
+                          icon="delete" ng-click="$ctrl.delete(identityProvider)"
+                          ng-if="identityProvider.type !== 'memory' && identityProvider.type !== 'gravitee'">
                 <md-tooltip md-direction="top" md-visible="false">Delete</md-tooltip>
               </ng-md-icon>
             </td>
@@ -74,28 +148,21 @@
         </table>
       </md-table-container>
 
-      <gravitee-empty-state ng-if="$ctrl.identityProviders.length === 0"
-                            icon="perm_identity"
-                            model="Identity Provider"
-                            message="Identity providers will appear here"
-                            sub-message="Start creating an identity provider"
-                            create-mode="true"></gravitee-empty-state>
-
     </div>
   </div>
   <md-fab-speed-dial permission permission-only="'portal-identity_provider-c'"
-                     md-direction="{{$ctrl.identityProviders.length > 0 ? 'left' : 'down'}}" md-open="false"
-                     ng-class="{'md-fab-bottom-right md-fab-scrollable' : $ctrl.identityProviders.length > 0, 'gv-help-displayed': $ctrl.$rootScope.helpDisplayed}" class="md-scale">
+                     md-direction="left" md-open="false"
+                     ng-class="{'gv-help-displayed': $ctrl.$rootScope.helpDisplayed}" class="md-scale md-fab-bottom-right md-fab-scrollable">
     <md-fab-trigger>
       <md-button aria-label="menu" class="md-fab md-success">
-        <md-tooltip ng-if="$ctrl.identityProviders.length > 0" md-direction="top" md-visible="false">New identity provider</md-tooltip>
+        <md-tooltip md-direction="top" md-visible="false">New identity provider</md-tooltip>
         <ng-md-icon icon="add"></ng-md-icon>
       </md-button>
     </md-fab-trigger>
 
     <md-fab-actions>
       <md-button ng-repeat="provider in $ctrl.availableProviders" class="md-fab md-raised md-mini"  ng-click="$ctrl.create(provider.type)">
-        <md-tooltip md-direction="{{$ctrl.availableProviders.length > 0 ? 'top' : 'right'}}">{{provider.name}}</md-tooltip>
+        <md-tooltip md-direction="top">{{provider.name}}</md-tooltip>
         <ng-md-icon style="fill: black;" icon="{{provider.icon}}"></ng-md-icon>
       </md-button>
     </md-fab-actions>

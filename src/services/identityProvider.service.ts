@@ -21,7 +21,7 @@ class IdentityProviderService {
   private URL: string;
 
   constructor(private $http, Constants) {
-    'ngInject';
+    "ngInject";
     this.URL = `${Constants.baseURL}configuration/identities/`;
   }
 
@@ -63,7 +63,8 @@ class IdentityProviderService {
         groupMappings: identityProvider.groupMappings,
         roleMappings: identityProvider.roleMappings,
         userProfileMapping: identityProvider.userProfileMapping,
-        emailRequired: identityProvider.emailRequired
+        emailRequired: identityProvider.emailRequired,
+        order: identityProvider.order
       }).then(response => {
         let identityProvider = response.data;
 
