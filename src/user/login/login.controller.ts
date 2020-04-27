@@ -22,6 +22,7 @@ import RouterService from '../../services/router.service';
 import * as _ from 'lodash';
 import { IdentityProvider } from '../../entities/identityProvider';
 import AuthenticationService from '../../services/authentication.service';
+import ReCaptchaService from '../../services/reCaptcha.service';
 
 class LoginController {
   user: any = {};
@@ -39,6 +40,7 @@ class LoginController {
     private $window,
     private $stateParams: StateParams,
     private $scope,
+    private ReCaptchaService: ReCaptchaService,
   ) {
     'ngInject';
     this.userCreationEnabled = Constants.portal.userCreation.enabled;
@@ -51,12 +53,14 @@ class LoginController {
 
   $onInit() {
     document.addEventListener('click', this._toDisabledMode);
+    this.ReCaptchaService.execute('login').then((ReCaptchaToken) => {
+      this.user.ReCaptchaToken = ReCaptchaToken;
+    });
   }
 
   $onDestroy() {
     document.removeEventListener('click', this._toDisabledMode);
   }
-
 
   authenticate(identityProvider: string) {
     let nonce = this.AuthenticationService.nonce(32);

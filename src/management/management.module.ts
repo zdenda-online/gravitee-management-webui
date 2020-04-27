@@ -449,6 +449,7 @@ import ApiQualityRuleController from "../management/configuration/api-quality-ru
 import DeleteApiQualityRuleDialogController from "../management/configuration/api-quality-rules/api-quality-rule/delete-api-quality-rule.dialog.controller";
 import DialogQueryFilterInformationController
   from "./configuration/analytics/dashboard/query-filter-information.dialog.controller";
+import ReCaptchaService from '../services/reCaptcha.service';
 
 (<any>window).traverse = traverse;
 
@@ -694,6 +695,7 @@ angular.module('gravitee-management', [uiRouter, permission, uiPermission, 'ngMa
   .service('ChartService', ChartService)
   .service('TopApiService', TopApiService)
   .service('MessageService', MessageService)
+  .service('ReCaptchaService', ReCaptchaService)
 
   .directive('filecontent', () => FileContentDirective)
   .directive('noDirtyCheck', () => new FormDirective())
